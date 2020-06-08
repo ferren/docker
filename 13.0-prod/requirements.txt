@@ -50,3 +50,4 @@ pycryptodome
 wechatpy[cryptography]
 pypinyin
 dingtalk-sdk
+diskcache
