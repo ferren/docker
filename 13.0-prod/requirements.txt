@@ -52,3 +52,4 @@ pypinyin
 dingtalk-sdk
 diskcache
 redis
+python-geohash
