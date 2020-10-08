@@ -11,7 +11,6 @@ RUN sed -i 's/deb.debian.org/ftp2.cn.debian.org/g' /etc/apt/sources.list
 # Install some deps, lessc and less-plugin-clean-css, and wkhtmltopdf
 COPY wkhtmltox_0.12.5-1.stretch_amd64.deb /wkhtmltox.deb
 RUN apt-get update && \
-    apt-get -y upgrade && \
     apt-get install -y --no-install-recommends \
 	build-essential \
         ca-certificates \
@@ -58,14 +57,19 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main' > /etc/
 RUN npm install -g rtlcss
 
 # Install Odoo
-COPY requirements.txt /requirements.txt
 COPY odoo_14.0.20201002_all.deb /odoo.deb
+ENV ODOO_VERSION 14.0
+ARG ODOO_RELEASE=20201002
+ARG ODOO_SHA=70917e1db8d100c791f31afbfcd782dd026bd4c9
+RUN apt-get update \
+    && apt-get -y install --no-install-recommends /odoo.deb \
+    && rm -rf /var/lib/apt/lists/* /odoo.deb
+
+COPY requirements.txt /requirements.txt
 RUN  pip3 install --upgrade pip \
     -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
 RUN  pip3 install -r requirements.txt \
     -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com && rm /requirements.txt
-RUN apt-get -y install --no-install-recommends /odoo.deb \
-    && rm -rf /var/lib/apt/lists/* /odoo.deb
 
 # Copy entrypoint script and Odoo configuration file
 COPY ./entrypoint.sh /
