@@ -6,6 +6,8 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 # Generate locale C.UTF-8 for postgres and general locale data
 ENV LANG C.UTF-8
 
+RUN sed -i 's/deb.debian.org/ftp2.cn.debian.org/g' /etc/apt/sources.list
+
 # Install some deps, lessc and less-plugin-clean-css, and wkhtmltopdf
 RUN apt-get update && \
     apt-get -y upgrade && \
