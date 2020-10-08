@@ -13,6 +13,7 @@ COPY wkhtmltox_0.12.5-1.stretch_amd64.deb /wkhtmltox.deb
 RUN apt-get update && \
     apt-get -y upgrade && \
     apt-get install -y --no-install-recommends \
+	build-essential \
         ca-certificates \
         curl \
         dirmngr \
