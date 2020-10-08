@@ -6,7 +6,10 @@ SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 # Generate locale C.UTF-8 for postgres and general locale data
 ENV LANG C.UTF-8
 
+RUN sed -i 's/deb.debian.org/ftp2.cn.debian.org/g' /etc/apt/sources.list
+
 # Install some deps, lessc and less-plugin-clean-css, and wkhtmltopdf
+COPY wkhtmltox_0.12.5-1.stretch_amd64.deb /wkhtmltox.deb
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         ca-certificates \
@@ -31,10 +34,8 @@ RUN apt-get update && \
         python3-xlrd \
         python3-xlwt \
         xz-utils \
-    && curl -o wkhtmltox.deb -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.stretch_amd64.deb \
-    && echo '7e35a63f9db14f93ec7feeb0fce76b30c08f2057 wkhtmltox.deb' | sha1sum -c - \
-    && apt-get install -y --no-install-recommends ./wkhtmltox.deb \
-    && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
+    && apt-get install -y --no-install-recommends /wkhtmltox.deb \
+    && rm -rf /var/lib/apt/lists/* /wkhtmltox.deb
 
 # install latest postgresql-client
 RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
@@ -54,14 +55,13 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main' > /etc/
 RUN npm install -g rtlcss
 
 # Install Odoo
+COPY odoo_14.0.20201002_all.deb /odoo.deb
 ENV ODOO_VERSION 14.0
 ARG ODOO_RELEASE=20201002
 ARG ODOO_SHA=70917e1db8d100c791f31afbfcd782dd026bd4c9
-RUN curl -o odoo.deb -sSL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/odoo_${ODOO_VERSION}.${ODOO_RELEASE}_all.deb \
-    && echo "${ODOO_SHA} odoo.deb" | sha1sum -c - \
-    && apt-get update \
-    && apt-get -y install --no-install-recommends ./odoo.deb \
-    && rm -rf /var/lib/apt/lists/* odoo.deb
+RUN apt-get update \
+    && apt-get -y install --no-install-recommends /odoo.deb \
+    && rm -rf /var/lib/apt/lists/* /odoo.deb
 
 # Copy entrypoint script and Odoo configuration file
 COPY ./entrypoint.sh /
