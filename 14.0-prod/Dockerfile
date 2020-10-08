@@ -22,6 +22,7 @@ RUN apt-get update && \
         libssl-dev \
         node-less \
         npm \
+	python3-dev \
         python3-num2words \
         python3-pdfminer \
         python3-pip \
@@ -74,7 +75,7 @@ COPY ./odoo.conf /etc/odoo/
 RUN chown odoo /etc/odoo/odoo.conf \
     && mkdir -p /mnt/extra-addons \
     && chown -R odoo /mnt/extra-addons
-VOLUME ["/etc/odoo", "/var/lib/odoo", "/mnt/extra-addons", "/usr/lib/python3/dist-packages/odoo"]
+VOLUME ["/etc/odoo", "/var/lib/odoo", "/var/log/odoo/", "/mnt/extra-addons", "/usr/lib/python3/dist-packages/odoo"]
 
 # Expose Odoo services
 EXPOSE 8069 8071 8072
