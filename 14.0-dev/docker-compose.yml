@@ -3,9 +3,11 @@ version: '3.1'
 
 services:
 
-  odoo_14_web:
-    image: odoo:14.0-prod
+  odoo_14_dev_web:
+    image: odoo:14.0-dev
     restart: always
+    stdin_open: true
+    tty: true
     depends_on:
       - igo_14_db
       - igo_14_redis
@@ -18,11 +20,9 @@ services:
       PASSWORD: "1qazXSW3edcVFR"
       db-filter: odoo_db_.*
     volumes:
-      - /home/ferren/Projects/odoo-14/odoo:/usr/lib/python3/dist-packages/odoo
-      - /home/ferren/Projects/odoo-14/addons:/mnt/extra-addons
+      - /home/ferren/Projects/odoo:/opt/odoo
       - /home/ferren/DataStore/odoo-14/files:/var/lib/odoo
-      - /home/ferren/DataStore/odoo-14/logs:/var/log/odoo
-      - /home/ferren/DataStore/odoo-14/config:/etc/odoo
+      - /home/ferren/DataStore/odoo-dev-config:/etc/odoo
     networks:
       - odoo-net
 
