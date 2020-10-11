@@ -69,7 +69,7 @@ COPY ./odoo.conf /etc/odoo/
 RUN mkdir -p /var/lib/odoo \
     && mkdir -p /opt/odoo \
     && mkdir -p /mnt/extra-addons
-VOLUME ["/etc/odoo", "/var/lib/odoo", "/opt/odoo"]
+VOLUME ["/etc/odoo", "/var/lib/odoo", "/opt/odoo", "/mnt/extra-addons"]
 
 # Expose Odoo services
 EXPOSE 8069 8071 8072
