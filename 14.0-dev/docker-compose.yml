@@ -21,6 +21,7 @@ services:
       db-filter: odoo_db_.*
     volumes:
       - /home/ferren/Projects/odoo:/opt/odoo
+      - /home/ferren/Projects/odoo-addons:/mnt/extra-addons
       - /home/ferren/DataStore/odoo-14/files:/var/lib/odoo
       - /home/ferren/DataStore/odoo-dev-config:/etc/odoo
     networks:
