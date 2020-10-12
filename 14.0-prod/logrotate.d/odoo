@@ -1,0 +1,6 @@
+/var/log/odoo/*.log {
+    copytruncate
+    daily
+    missingok
+    notifempty
+}
