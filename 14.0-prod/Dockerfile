@@ -56,15 +56,6 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main' > /etc/
 # Install rtlcss (on Debian buster)
 RUN npm install -g rtlcss
 
-# Install Odoo
-COPY odoo_14.0.20201002_all.deb /odoo.deb
-ENV ODOO_VERSION 14.0
-ARG ODOO_RELEASE=20201002
-ARG ODOO_SHA=70917e1db8d100c791f31afbfcd782dd026bd4c9
-RUN apt-get update \
-    && apt-get -y install --no-install-recommends /odoo.deb \
-    && rm -rf /var/lib/apt/lists/* /odoo.deb
-
 COPY requirements.txt /requirements.txt
 RUN  pip3 install --upgrade pip \
     -i http://mirrors.aliyun.com/pypi/simple --trusted-host mirrors.aliyun.com
@@ -75,15 +66,28 @@ RUN  pip3 install -r requirements.txt \
 COPY ./entrypoint.sh /
 COPY ./odoo.conf /etc/odoo/
 
-# Set permissions and Mount /var/lib/odoo to allow restoring filestore and /mnt/extra-addons for users addons
-RUN chown odoo /etc/odoo/odoo.conf \
-    && mkdir -p /var/lib/odoo \
-    && chown -R odoo /var/lib/odoo \
-    && mkdir -p /var/log/odoo \
-    && chown -R odoo /var/log/odoo \
-    && mkdir -p /mnt/extra-addons \
+# set odoo user
+ENV ODOO_CONFIGURATION_FILE=/etc/odoo/odoo.conf
+ENV ODOO_GROUP="odoo"
+ENV ODOO_DATA_DIR=/var/lib/odoo
+ENV ODOO_BASE_DIR=/opt/odoo
+ENV ODOO_LOG_DIR=/var/log/odoo
+ENV ODOO_USER="odoo"
+RUN adduser --system --home $ODOO_DATA_DIR --quiet --group $ODOO_USER \
+    && chown $ODOO_USER:$ODOO_GROUP $ODOO_CONFIGURATION_FILE \
+    && chmod 0640 $ODOO_CONFIGURATION_FILE \
+    && mkdir -p $ODOO_LOG_DIR \
+    && chown $ODOO_USER:$ODOO_GROUP $ODOO_LOG_DIR \
+    && chmod 0750 $ODOO_LOG_DIR \
+    && chown $ODOO_USER:$ODOO_GROUP $ODOO_DATA_DIR \
+    && mkdir -p $ODOO_BASE_DIR \
+    && chown $ODOO_USER:$ODOO_GROUP $ODOO_BASE_DIR \
+    && touch $ODOO_BASE_DIR/odoo-bin \
+    && ln -sf $ODOO_BASE_DIR/odoo-bin /usr/bin/odoo
+
+RUN mkdir -p /mnt/extra-addons \
     && chown -R odoo /mnt/extra-addons
-VOLUME ["/etc/odoo", "/var/lib/odoo", "/var/log/odoo/", "/mnt/extra-addons", "/usr/lib/python3/dist-packages/odoo"]
+VOLUME ["/etc/odoo", "/var/lib/odoo", "/var/log/odoo/", "/opt/odoo", "/mnt/extra-addons"]
 
 # Expose Odoo services
 EXPOSE 8069 8071 8072
