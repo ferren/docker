@@ -85,9 +85,13 @@ RUN adduser --system --home $ODOO_DATA_DIR --quiet --group $ODOO_USER \
     && touch $ODOO_BASE_DIR/odoo-bin \
     && ln -sf $ODOO_BASE_DIR/odoo-bin /usr/bin/odoo
 
-RUN mkdir -p /mnt/extra-addons \
+
+RUN mkdir -p /etc/logrotate.d \
+    && mkdir -p /mnt/extra-addons \
     && chown -R odoo /mnt/extra-addons
 VOLUME ["/etc/odoo", "/var/lib/odoo", "/var/log/odoo/", "/opt/odoo", "/mnt/extra-addons"]
+
+COPY ./logrotate.d/odoo /etc/logrotate.d/odoo
 
 # Expose Odoo services
 EXPOSE 8069 8071 8072
