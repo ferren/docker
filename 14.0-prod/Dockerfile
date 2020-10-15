@@ -21,6 +21,7 @@ RUN apt-get update && \
         libssl-dev \
         node-less \
         npm \
+	openjdk-11-jdk \
 	python3-dev \
         python3-num2words \
         python3-pdfminer \
