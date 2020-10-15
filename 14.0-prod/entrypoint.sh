@@ -23,6 +23,7 @@ check_config "db_host" "$HOST"
 check_config "db_port" "$PORT"
 check_config "db_user" "$USER"
 check_config "db_password" "$PASSWORD"
+crontab -u odoo /opt/logrotate.txt
 
 case "$1" in
     -- | odoo)
