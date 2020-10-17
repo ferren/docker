@@ -83,16 +83,12 @@ ENV ODOO_BASE_DIR=/opt/odoo
 ENV ODOO_LOG_DIR=/var/log/odoo
 ENV ODOO_USER="odoo"
 ENV ODOO_GROUP="odoo"
-RUN addgroup --gid 1001 $ODOO_GROUP \
-    && adduser --system --home $ODOO_DATA_DIR --uid 1001 --gid 1001 --quiet $ODOO_USER \
+RUN addgroup --gid 1006 $ODOO_GROUP \
+    && adduser --system --home $ODOO_DATA_DIR --uid 1006 --gid 1006 --quiet $ODOO_USER \
     && usermod -a -G crontab $ODOO_USER \
     && chown $ODOO_USER:$ODOO_GROUP /opt/logrotate.txt \
-    #&& touch /var/run/crond.pid \
-    #&& chgrp $ODOO_GROUP /var/run/crond.pid \
     && echo $ODOO_USER > /etc/cron.allow \
-    #&& chown $ODOO_USER:$ODOO_GROUP /usr/sbin/cron \
-    #&& chmod u=rwx,g=rwx,o=t /var/spool/cron/crontabs \
-    #&& chmod 0664 /var/run/crond.pid \
+    && chown $ODOO_USER:$ODOO_GROUP /var/lib/logrotate \
     && chown $ODOO_USER $ODOO_CONFIGURATION_FILE \
     && chmod 0640 $ODOO_CONFIGURATION_FILE \
     && mkdir -p $ODOO_LOG_DIR \

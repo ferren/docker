@@ -3,4 +3,5 @@
     daily
     missingok
     notifempty
+    size 50k
 }

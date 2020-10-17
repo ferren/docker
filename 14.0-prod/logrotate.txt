@@ -1,1 +1,1 @@
-10    0     *     *     *     /etc/cron.daily/logrotate
+10    0     *     *     *     logrotate /etc/logrotate.d/odoo
