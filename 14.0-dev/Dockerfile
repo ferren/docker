@@ -1,15 +1,16 @@
-FROM debian:buster-slim
+FROM ubuntu:20.04
 MAINTAINER Ferren Liu <ferrenliu@163.com>
-
+RUN  ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
 
 # Generate locale C.UTF-8 for postgres and general locale data
 ENV LANG C.UTF-8
 
-RUN sed -i 's/deb.debian.org/ftp2.cn.debian.org/g' /etc/apt/sources.list
+RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+RUN sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 
 # Install some deps, lessc and less-plugin-clean-css, and wkhtmltopdf
-COPY wkhtmltox_0.12.5-1.stretch_amd64.deb /wkhtmltox.deb
+COPY wkhtmltox_0.12.5-1.bionic_amd64.deb /wkhtmltox.deb
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
 	build-essential \
@@ -17,9 +18,15 @@ RUN apt-get update && \
         curl \
         dirmngr \
         fonts-noto-cjk \
-        gnupg \
 	git \
+        gnupg \
+	libjpeg-dev \
+	libldap2-dev \
+	libsasl2-dev \
         libssl-dev \
+	libxml2-dev \
+	libxslt-dev \
+	logrotate \
         node-less \
         npm \
 	openjdk-11-jdk \
@@ -38,11 +45,12 @@ RUN apt-get update && \
         python3-xlrd \
         python3-xlwt \
         xz-utils \
+	zlib1g-dev \
     && apt-get install -y --no-install-recommends /wkhtmltox.deb \
     && rm -rf /var/lib/apt/lists/* /wkhtmltox.deb
 
 # install latest postgresql-client
-RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
+RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ focal-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
     && GNUPGHOME="$(mktemp -d)" \
     && export GNUPGHOME \
     && repokey='B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8' \
@@ -51,7 +59,7 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main' > /etc/
     && gpgconf --kill all \
     && rm -rf "$GNUPGHOME" \
     && apt-get update  \
-    && apt-get install --no-install-recommends -y postgresql-client \
+    && apt-get install --no-install-recommends -y postgresql-client libpq-dev \
     && rm -f /etc/apt/sources.list.d/pgdg.list \
     && rm -rf /var/lib/apt/lists/*
 
@@ -67,9 +75,11 @@ RUN  pip3 install -r requirements.txt \
 # Copy Odoo configuration file
 COPY ./odoo.conf /etc/odoo/
 
-# Set permissions and Mount /var/lib/odoo to allow restoring filestore and /mnt/extra-addons for users addons
-RUN mkdir -p /var/lib/odoo \
-    && mkdir -p /opt/odoo \
+# set odoo user
+ENV ODOO_DATA_DIR=/var/lib/odoo
+ENV ODOO_BASE_DIR=/opt/odoo
+RUN mkdir -p $ODOO_BASE_DIR \
+    && mkdir -p $ODOO_DATA_DIR \
     && mkdir -p /mnt/extra-addons
 VOLUME ["/etc/odoo", "/var/lib/odoo", "/opt/odoo", "/mnt/extra-addons"]
 
