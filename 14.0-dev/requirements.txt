@@ -48,8 +48,10 @@ xlwt==1.3.*
 xlrd==1.1.0
 pypiwin32 ; sys_platform == 'win32'
 pycryptodome
-wechatpy[cryptography]
 pypinyin
+optionaldict>=0.1.0
+dataclasses>=0.7
+requests-pkcs12>=1.7
 dingtalk-sdk
 diskcache
 redis
