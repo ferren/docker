@@ -50,7 +50,7 @@ pypiwin32 ; sys_platform == 'win32'
 pycryptodome
 pypinyin
 optionaldict>=0.1.0
-dataclasses>=0.7
+dataclasses>=0.7; python_version < '3.7'
 requests-pkcs12>=1.7
 dingtalk-sdk
 diskcache
