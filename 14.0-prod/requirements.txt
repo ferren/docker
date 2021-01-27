@@ -60,3 +60,4 @@ geopy
 xmltodict==0.11.0
 itsdangerous==0.24
 jingtrang
+records
